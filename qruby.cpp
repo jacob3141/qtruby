@@ -27,13 +27,8 @@
 // Own includes
 #include "qruby.h"
 
-QRuby& QRuby::instance() {
-    static QRuby qruby;
-    return qruby;
-}
-
-QRuby::QRuby() :
-    QObject() {
+QRuby::QRuby(QObject *parent) :
+    QObject(parent) {
     ruby_init();
     ruby_setup();
 }

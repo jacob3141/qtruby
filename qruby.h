@@ -36,7 +36,7 @@
 class QRuby : public QObject {
     Q_OBJECT
 public:
-    static QRuby& instance();
+    QRuby(QObject *parent = 0);
     ~QRuby();
 
     QRubyValue newObject();
@@ -48,8 +48,5 @@ public:
 
     void printVersion();
     void printCopyrightNotice();
-
-private:
-    QRuby();
 };
 
