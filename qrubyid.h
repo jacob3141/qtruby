@@ -24,32 +24,20 @@
 #pragma once
 
 // Ruby includes
-#include "ruby.h"
-
-// Qt includes
-#include <QString>
-#include <QObject>
+#include <ruby.h>
 
 // Own includes
-#include "qrubyvalue.h"
+class QRubyValue;
 
-class QRuby : public QObject {
-    Q_OBJECT
+class QRubyId {
 public:
-    static QRuby& instance();
-    ~QRuby();
+    QRubyId(ID id = 0);
+    ~QRubyId();
 
-    QRubyValue newObject();
+    ID id();
 
-    QRubyValue evaluate(QString code);
-
-    QRubyValue errorInfo();
-    void setErrorInfo(QRubyValue rubyValue);
-
-    void printVersion();
-    void printCopyrightNotice();
+    QRubyValue toRubyValue();
 
 private:
-    QRuby();
+    ID _id;
 };
-

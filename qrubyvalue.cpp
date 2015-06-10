@@ -23,12 +23,25 @@
 
 // Own includes
 #include "qrubyvalue.h"
+#include "qrubyid.h"
 
 QRubyValue::QRubyValue(VALUE value) :
     _value(value) {
 }
 
+QRubyValue::QRubyValue(QString value) {
+    _value = rb_str_buf_new_cstr(value.toStdString().c_str());
+}
+
+QRubyValue::QRubyValue(double value) {
+    _value = rb_float_new(value);
+}
+
 QRubyValue::~QRubyValue() {
+}
+
+bool QRubyValue::operator==(const QRubyValue& other) {
+    return rb_equal(_value, other._value);
 }
 
 QRubyValue::ValueType QRubyValue::type() {
@@ -117,5 +130,59 @@ QRubyValue::ValueType QRubyValue::type() {
         return ValueTypeMask;
         break;
     }
+}
+
+bool QRubyValue::isObject()             { return type() == ValueTypeObject; }
+bool QRubyValue::isClass()              { return type() == ValueTypeClass; }
+bool QRubyValue::isModule()             { return type() == ValueTypeModule; }
+bool QRubyValue::isFloat()              { return type() == ValueTypeFloat; }
+bool QRubyValue::isString()             { return type() == ValueTypeString; }
+bool QRubyValue::isRegularExpression()  { return type() == ValueTypeRegularExpression; }
+bool QRubyValue::isArray()              { return type() == ValueTypeArray; }
+bool QRubyValue::isHash()               { return type() == ValueTypeHash; }
+bool QRubyValue::isStruct()             { return type() == ValueTypeStruct; }
+bool QRubyValue::isBigNumber()          { return type() == ValueTypeBigNumber; }
+bool QRubyValue::isFile()               { return type() == ValueTypeFile; }
+bool QRubyValue::isData()               { return type() == ValueTypeData; }
+bool QRubyValue::isMatch()              { return type() == ValueTypeMatch; }
+bool QRubyValue::isComplex()            { return type() == ValueTypeComplex; }
+bool QRubyValue::isRational()           { return type() == ValueTypeRational; }
+bool QRubyValue::isNil()                { return type() == ValueTypeNil; }
+bool QRubyValue::isTrue()               { return type() == ValueTypeTrue; }
+bool QRubyValue::isFalse()              { return type() == ValueTypeFalse; }
+bool QRubyValue::isSymbol()             { return type() == ValueTypeSymbol; }
+bool QRubyValue::isFixedNumber()        { return type() == ValueTypeFixedNumber; }
+bool QRubyValue::isUndefined()          { return type() == ValueTypeUndefined; }
+bool QRubyValue::isNode()               { return type() == ValueTypeNode; }
+bool QRubyValue::isIncludeClass()       { return type() == ValueTypeIncludeClass; }
+bool QRubyValue::isZombie()             { return type() == ValueTypeZombie; }
+bool QRubyValue::isMask()               { return type() == ValueTypeMask; }
+
+QRubyValue QRubyValue::classValue() {
+    return QRubyValue(rb_class_of(_value));
+}
+
+QRubyValue QRubyValue::each() {
+    return QRubyValue(rb_each(_value));
+}
+
+QRubyValue QRubyValue::aryEach() {
+    return QRubyValue(rb_ary_each(_value));
+}
+
+QRubyId QRubyValue::toRubyId() {
+    return QRubyId(rb_sym2id(_value));
+}
+
+QString QRubyValue::toString() {
+    return QString(rb_string_value_cstr(&_value));
+}
+
+double QRubyValue::toDouble() {
+    return rb_float_value(_value);
+}
+
+VALUE QRubyValue::value() {
+    return _value;
 }
 

@@ -21,35 +21,21 @@
 // Please contact Jacob Dawid <jacob@omg-it.works>
 //
 
-#pragma once
-
-// Ruby includes
-#include "ruby.h"
-
-// Qt includes
-#include <QString>
-#include <QObject>
-
 // Own includes
+#include "qrubyid.h"
 #include "qrubyvalue.h"
 
-class QRuby : public QObject {
-    Q_OBJECT
-public:
-    static QRuby& instance();
-    ~QRuby();
+QRubyId::QRubyId(ID id) :
+    _id(id) {
+}
 
-    QRubyValue newObject();
+QRubyId::~QRubyId() {
+}
 
-    QRubyValue evaluate(QString code);
+ID QRubyId::id() {
+    return _id;
+}
 
-    QRubyValue errorInfo();
-    void setErrorInfo(QRubyValue rubyValue);
-
-    void printVersion();
-    void printCopyrightNotice();
-
-private:
-    QRuby();
-};
-
+QRubyValue QRubyId::toRubyValue() {
+    return QRubyValue(rb_id2sym(_id));
+}

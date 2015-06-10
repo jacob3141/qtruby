@@ -29,11 +29,13 @@ CONFIG += staticlib
 
 SOURCES += \
     qruby.cpp \
-    qrubyvalue.cpp
+    qrubyvalue.cpp \
+    qrubyid.cpp
 
 HEADERS += \
     qruby.h \
-    qrubyvalue.h
+    qrubyvalue.h \
+    qrubyid.h
 
 RESOURCES +=
 

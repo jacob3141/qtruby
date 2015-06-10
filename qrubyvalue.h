@@ -24,7 +24,12 @@
 #ifndef QRUBYVALUE_H
 #define QRUBYVALUE_H
 
+// Ruby includes
 #include "ruby.h"
+
+// Qt includes
+#include <QString>
+class QRubyId;
 
 class QRubyValue {
 public:
@@ -58,9 +63,52 @@ public:
     };
 
     QRubyValue(VALUE value = 0);
+    QRubyValue(QString value);
+    QRubyValue(double value);
+
     ~QRubyValue();
 
+    bool operator==(const QRubyValue& other);
+
     ValueType type();
+
+    bool isObject();
+    bool isClass();
+    bool isModule();
+    bool isFloat();
+    bool isString();
+    bool isRegularExpression();
+    bool isArray();
+    bool isHash();
+    bool isStruct();
+    bool isBigNumber();
+    bool isFile();
+    bool isData();
+    bool isMatch();
+    bool isComplex();
+    bool isRational();
+    bool isNil();
+    bool isTrue();
+    bool isFalse();
+    bool isSymbol();
+    bool isFixedNumber();
+    bool isUndefined();
+    bool isNode();
+    bool isIncludeClass();
+    bool isZombie();
+    bool isMask();
+
+    QRubyValue classValue();
+    QRubyValue each();
+    QRubyValue aryEach();
+
+    QRubyId toRubyId();
+
+    QString toString();
+    double toDouble();
+
+
+    VALUE value();
 
 private:
     VALUE _value;

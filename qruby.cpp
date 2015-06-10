@@ -27,12 +27,35 @@
 // Own includes
 #include "qruby.h"
 
-QRuby::QRuby() {
+QRuby& QRuby::instance() {
+    static QRuby qruby;
+    return qruby;
+}
+
+QRuby::QRuby() :
+    QObject() {
+    ruby_init();
     ruby_setup();
 }
 
 QRuby::~QRuby() {
     ruby_cleanup(0);
+}
+
+QRubyValue QRuby::newObject() {
+    return QRubyValue(rb_newobj());
+}
+
+QRubyValue QRuby::evaluate(QString code) {
+    return QRubyValue(rb_eval_string_protect(code.toStdString().c_str(), 0));
+}
+
+QRubyValue QRuby::errorInfo() {
+    return QRubyValue(rb_errinfo());
+}
+
+void QRuby::setErrorInfo(QRubyValue rubyValue) {
+    rb_set_errinfo(rubyValue.value());
 }
 
 void QRuby::printVersion() {
@@ -42,4 +65,3 @@ void QRuby::printVersion() {
 void QRuby::printCopyrightNotice() {
     ruby_show_copyright();
 }
-
