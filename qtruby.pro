@@ -27,12 +27,20 @@ QT += core
 
 CONFIG += staticlib
 
-SOURCES +=
+SOURCES += \
+    qruby.cpp \
+    qrubyvalue.cpp
 
-HEADERS +=
+HEADERS += \
+    qruby.h \
+    qrubyvalue.h
 
 RESOURCES +=
 
 OTHER_FILES += \
     LICENSE \
     README.md
+
+INCLUDEPATH += \
+  /usr/include/x86_64-linux-gnu/ruby-2.2.0 \
+  /usr/include/ruby-2.2.0
