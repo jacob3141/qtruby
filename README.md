@@ -7,7 +7,27 @@ Support this and other free software projects of mine by donating bitcoins:
 
 # QtRuby
 
-Execute ruby code from within C++/Qt applications.
+Execute ruby code seamlessly from within C++/Qt applications.
+
+```cpp
+// Qt includes
+#include <QCoreApplication>
+
+// QtRuby includes
+#include "qruby.h"
+#include "qrubyvalue.h"
+
+int main(int argc, char *argv[]) {
+    QCoreApplication app(argc, argv);
+    Q_UNUSED(app);
+
+    QRuby rb;
+    rb.printVersion();
+    rb.evaluate("(1..10).each do |n| puts n end");
+
+    return 0;
+}
+```
 
 # Installation and usage
 
