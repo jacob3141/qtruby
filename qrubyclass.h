@@ -21,42 +21,17 @@
 // Please contact Jacob Dawid <jacob@omg-it.works>
 //
 
-// Ruby includes
-#include <ruby.h>
+#pragma once
 
 // Own includes
-#include "qruby.h"
+#include "qrubyvalue.h"
 
-QRuby::QRuby(QObject *parent) :
-    QObject(parent) {
-    ruby_setup();
-    ruby_init();
-}
+class QRubyClass :
+    public QRubyValue {
+public:
+    QRubyClass(QString className, QRubyValue superClass = QRubyValue());
+    QRubyClass(QRubyValue superClass = QRubyValue());
+    ~QRubyClass();
 
-QRuby::~QRuby() {
-    ruby_cleanup(0);
-}
-
-QRubyValue QRuby::newObject() {
-    return QRubyValue(rb_newobj());
-}
-
-QRubyValue QRuby::evaluate(QString code) {
-    return QRubyValue(rb_eval_string_protect(code.toStdString().c_str(), 0));
-}
-
-QRubyValue QRuby::errorInfo() {
-    return QRubyValue(rb_errinfo());
-}
-
-void QRuby::setErrorInfo(QRubyValue rubyValue) {
-    rb_set_errinfo(rubyValue.value());
-}
-
-void QRuby::printVersion() {
-    ruby_show_version();
-}
-
-void QRuby::printCopyrightNotice() {
-    ruby_show_copyright();
-}
+    QString className();
+};

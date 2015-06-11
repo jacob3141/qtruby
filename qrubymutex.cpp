@@ -21,42 +21,29 @@
 // Please contact Jacob Dawid <jacob@omg-it.works>
 //
 
-// Ruby includes
-#include <ruby.h>
-
 // Own includes
-#include "qruby.h"
+#include "qrubymutex.h"
 
-QRuby::QRuby(QObject *parent) :
-    QObject(parent) {
-    ruby_setup();
-    ruby_init();
+QRubyMutex::QRubyMutex() :
+    QRubyValue() {
+    _value = rb_mutex_new();
 }
 
-QRuby::~QRuby() {
-    ruby_cleanup(0);
+QRubyMutex::~QRubyMutex() {
 }
 
-QRubyValue QRuby::newObject() {
-    return QRubyValue(rb_newobj());
+bool QRubyMutex::isLocked() {
+    return Qtrue == rb_mutex_locked_p(_value);
 }
 
-QRubyValue QRuby::evaluate(QString code) {
-    return QRubyValue(rb_eval_string_protect(code.toStdString().c_str(), 0));
+bool QRubyMutex::tryLock() {
+    return Qtrue == rb_mutex_trylock(_value);
 }
 
-QRubyValue QRuby::errorInfo() {
-    return QRubyValue(rb_errinfo());
+void QRubyMutex::lock() {
+    rb_mutex_lock(_value);
 }
 
-void QRuby::setErrorInfo(QRubyValue rubyValue) {
-    rb_set_errinfo(rubyValue.value());
-}
-
-void QRuby::printVersion() {
-    ruby_show_version();
-}
-
-void QRuby::printCopyrightNotice() {
-    ruby_show_copyright();
+void QRubyMutex::unlock() {
+    rb_mutex_unlock(_value);
 }

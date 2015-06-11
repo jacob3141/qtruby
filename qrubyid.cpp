@@ -37,5 +37,5 @@ ID QRubyId::id() {
 }
 
 QRubyValue QRubyId::toRubyValue() {
-    return QRubyValue(rb_id2sym(_id));
+    return rb_id2sym(_id);
 }

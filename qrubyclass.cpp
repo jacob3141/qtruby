@@ -21,42 +21,30 @@
 // Please contact Jacob Dawid <jacob@omg-it.works>
 //
 
-// Ruby includes
-#include <ruby.h>
-
 // Own includes
-#include "qruby.h"
+#include "qrubyclass.h"
 
-QRuby::QRuby(QObject *parent) :
-    QObject(parent) {
-    ruby_setup();
-    ruby_init();
+QRubyClass::QRubyClass(QString className, QRubyValue superClass) :
+    QRubyValue() {
+    if(superClass.isNil()) {
+        superClass = rb_cObject;
+    }
+    _value = rb_define_class(className.toStdString().c_str(),
+                             superClass.value());
 }
 
-QRuby::~QRuby() {
-    ruby_cleanup(0);
+QRubyClass::QRubyClass(QRubyValue superClass) :
+    QRubyValue() {
+    if(superClass.isNil()) {
+        superClass = rb_cObject;
+    }
+    _value = rb_class_new(superClass.value());
 }
 
-QRubyValue QRuby::newObject() {
-    return QRubyValue(rb_newobj());
+QRubyClass::~QRubyClass() {
 }
 
-QRubyValue QRuby::evaluate(QString code) {
-    return QRubyValue(rb_eval_string_protect(code.toStdString().c_str(), 0));
+QString QRubyClass::className() {
+    return QRubyValue(rb_class_name(_value)).toString();
 }
 
-QRubyValue QRuby::errorInfo() {
-    return QRubyValue(rb_errinfo());
-}
-
-void QRuby::setErrorInfo(QRubyValue rubyValue) {
-    rb_set_errinfo(rubyValue.value());
-}
-
-void QRuby::printVersion() {
-    ruby_show_version();
-}
-
-void QRuby::printCopyrightNotice() {
-    ruby_show_copyright();
-}

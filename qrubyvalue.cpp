@@ -159,27 +159,37 @@ bool QRubyValue::isZombie()             { return type() == ValueTypeZombie; }
 bool QRubyValue::isMask()               { return type() == ValueTypeMask; }
 
 QRubyValue QRubyValue::classValue() {
-    return QRubyValue(rb_class_of(_value));
+    return rb_class_of(_value);
+}
+
+QString QRubyValue::className() {
+    return rb_obj_classname(_value);
 }
 
 QRubyValue QRubyValue::each() {
-    return QRubyValue(rb_each(_value));
+    return rb_each(_value);
 }
 
 QRubyValue QRubyValue::aryEach() {
-    return QRubyValue(rb_ary_each(_value));
+    return rb_ary_each(_value);
 }
 
 QRubyId QRubyValue::toRubyId() {
-    return QRubyId(rb_sym2id(_value));
+    return rb_sym2id(_value);
 }
 
 QString QRubyValue::toString() {
-    return QString(rb_string_value_cstr(&_value));
+    VALUE stringValue;
+    if(!isString()) {
+        stringValue = rb_any_to_s(_value);
+    } else {
+        stringValue = _value;
+    }
+    return rb_string_value_cstr(&stringValue);
 }
 
-double QRubyValue::toDouble() {
-    return rb_float_value(_value);
+double QRubyValue::toNumber() {
+    return rb_float_value(rb_to_float(_value));
 }
 
 VALUE QRubyValue::value() {

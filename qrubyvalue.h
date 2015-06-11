@@ -62,7 +62,7 @@ public:
         ValueTypeMask
     };
 
-    QRubyValue(VALUE value = 0);
+    QRubyValue(VALUE value = Qnil);
     QRubyValue(QString value);
     QRubyValue(double value);
 
@@ -99,18 +99,19 @@ public:
     bool isMask();
 
     QRubyValue classValue();
+    QString className();
+
     QRubyValue each();
     QRubyValue aryEach();
 
     QRubyId toRubyId();
 
     QString toString();
-    double toDouble();
-
+    double toNumber();
 
     VALUE value();
 
-private:
+protected:
     VALUE _value;
 };
 
