@@ -23,23 +23,11 @@
 
 #pragma once
 
-// Ruby includes
-#include <ruby.h>
-
 // Own includes
-class QRubyValue;
+#include "qrubyvalue.h"
 
-// Qt includes
-#include <QString>
-
-class QRubyId {
+class QRubyFloat :
+    public QRubyValue {
 public:
-    QRubyId(QString identifier);
-    QRubyId(ID id = 0);
-    ~QRubyId();
-
-    ID id();
-
-private:
-    ID _id;
+    QRubyFloat();
 };

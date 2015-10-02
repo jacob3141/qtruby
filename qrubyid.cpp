@@ -25,6 +25,10 @@
 #include "qrubyid.h"
 #include "qrubyvalue.h"
 
+QRubyId::QRubyId(QString identifier) {
+    _id = rb_intern(identifier.toStdString().c_str());
+}
+
 QRubyId::QRubyId(ID id) :
     _id(id) {
 }
@@ -36,6 +40,3 @@ ID QRubyId::id() {
     return _id;
 }
 
-QRubyValue QRubyId::toRubyValue() {
-    return rb_id2sym(_id);
-}

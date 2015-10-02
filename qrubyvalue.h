@@ -21,18 +21,63 @@
 // Please contact Jacob Dawid <jacob@omg-it.works>
 //
 
-#ifndef QRUBYVALUE_H
-#define QRUBYVALUE_H
+#pragma once
 
 // Ruby includes
 #include "ruby.h"
 
 // Qt includes
 #include <QString>
+#include <QList>
+#include <QVariant>
+
 class QRubyId;
+
+class QRubyObject;
+class QRubyClass;
+class QRubyModule;
+class QRubyFloat;
+class QRubyString;
+class QRubyRegExp;
+class QRubyArray;
+class QRubyHash;
+class QRubyStruct;
+class QRubyBigNumber;
+class QRubyFile;
+class QRubyData;
+class QRubyMatch;
+class QRubyComplex;
+class QRubyRational;
+class QRubyNil;
+class QRubyTrue;
+class QRubyFalse;
+class QRubySymbol;
+class QRubyFixedNumber;
+class QRubyUndefined;
+class QRubyNode;
+class QRubyIncludeClass;
+class QRubyZombie;
+class QRubyMask;
+
+class QRubyValue;
+typedef QList<QRubyValue> QRubyValueList;
 
 class QRubyValue {
 public:
+    enum SpecialConstants {
+        False           = RUBY_Qfalse,
+        True            = RUBY_Qtrue,
+        Nil             = RUBY_Qnil,
+        Undefined       = RUBY_Qundef,
+
+        ImmediateMask   = RUBY_IMMEDIATE_MASK,
+        FixnumFlag      = RUBY_FIXNUM_FLAG,
+        FlonumMask      = RUBY_FLONUM_MASK,
+        FlonumFlag      = RUBY_FLONUM_FLAG,
+        SymbolFlag      = RUBY_SYMBOL_FLAG,
+        SpecialShift    = RUBY_SPECIAL_SHIFT
+    };
+
     enum ValueType {
         ValueTypeNone,
         ValueTypeObject,
@@ -40,7 +85,7 @@ public:
         ValueTypeModule,
         ValueTypeFloat,
         ValueTypeString,
-        ValueTypeRegularExpression,
+        ValueTypeRegExp,
         ValueTypeArray,
         ValueTypeHash,
         ValueTypeStruct,
@@ -62,11 +107,35 @@ public:
         ValueTypeMask
     };
 
+    QRubyValue(const QRubyValue& other);
+
     QRubyValue(VALUE value = Qnil);
-    QRubyValue(QString value);
-    QRubyValue(double value);
+    QRubyValue(QVariant variant);
 
     ~QRubyValue();
+
+
+    /** Performs a function call. */
+    QRubyValue functionCall(
+        QString functionName,
+        QRubyValueList arguments = QRubyValueList()
+    );
+
+    QRubyValue functionCall(
+        QString functionName,
+        QVariant argument1,
+        QVariant argument2 = QVariant::Invalid,
+        QVariant argument3 = QVariant::Invalid,
+        QVariant argument4 = QVariant::Invalid,
+        QVariant argument5 = QVariant::Invalid,
+        QVariant argument6 = QVariant::Invalid,
+        QVariant argument7 = QVariant::Invalid,
+        QVariant argument8 = QVariant::Invalid,
+        QVariant argument9 = QVariant::Invalid,
+        QVariant argument10 = QVariant::Invalid,
+        QVariant argument11 = QVariant::Invalid,
+        QVariant argument12 = QVariant::Invalid
+    );
 
     bool operator==(const QRubyValue& other);
 
@@ -84,12 +153,9 @@ public:
     bool isBigNumber();
     bool isFile();
     bool isData();
-    bool isMatch();
     bool isComplex();
     bool isRational();
-    bool isNil();
-    bool isTrue();
-    bool isFalse();
+
     bool isSymbol();
     bool isFixedNumber();
     bool isUndefined();
@@ -98,21 +164,27 @@ public:
     bool isZombie();
     bool isMask();
 
-    QRubyValue classValue();
+    bool isMatch();
+    bool isNil();
+    bool isTrue();
+    bool isFalse();
+
+    QRubyClass rubyClass();
     QString className();
 
     QRubyValue each();
     QRubyValue aryEach();
 
-    QRubyId toRubyId();
-
     QString toString();
-    double toNumber();
+    double toDouble();
+    long toLong();
 
     VALUE value();
+
+    QRubyObject toObject();
 
 protected:
     VALUE _value;
 };
 
-#endif // QRUBYVALUE_H
+#define AS_BOOL(value) (QRubyValue((value)).isTrue())

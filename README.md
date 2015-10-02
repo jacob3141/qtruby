@@ -35,6 +35,10 @@ Installation via qt-pods recommended. You can update your version at any time an
 
 https://github.com/cybercatalyst/qt-pods
 
+# Dependencies
+
+You need to install the ruby2.1-dev package.
+
 # License
 
 Licensed under GNU AGPLv3. Available under a commercial license, too.

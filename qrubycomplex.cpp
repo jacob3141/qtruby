@@ -21,25 +21,11 @@
 // Please contact Jacob Dawid <jacob@omg-it.works>
 //
 
-#pragma once
-
-// Ruby includes
-#include <ruby.h>
-
 // Own includes
-class QRubyValue;
+#include "qrubycomplex.h"
 
-// Qt includes
-#include <QString>
+QRubyComplex::QRubyComplex() :
+    QRubyValue() {
 
-class QRubyId {
-public:
-    QRubyId(QString identifier);
-    QRubyId(ID id = 0);
-    ~QRubyId();
+}
 
-    ID id();
-
-private:
-    ID _id;
-};

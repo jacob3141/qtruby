@@ -25,19 +25,230 @@
 #include "qrubyvalue.h"
 #include "qrubyid.h"
 
+#include "qrubyobject.h"
+#include "qrubyclass.h"
+
+// Standard includes
+#include <stdarg.h>
+
+// Qt includes
+#include <QVariant>
+#include <QDebug>
+
+class QRubyClass;
+class QRubyModule;
+class QRubyFloat;
+class QRubyString;
+class QRubyRegExp;
+class QRubyArray;
+class QRubyHash;
+class QRubyStruct;
+class QRubyBigNumber;
+class QRubyFile;
+class QRubyData;
+class QRubyMatch;
+class QRubyComplex;
+class QRubyRational;
+class QRubyNil;
+class QRubyTrue;
+class QRubyFalse;
+class QRubySymbol;
+class QRubyFixedNumber;
+class QRubyUndefined;
+class QRubyNode;
+class QRubyIncludeClass;
+class QRubyZombie;
+class QRubyMask;
+
+QRubyValue::QRubyValue(const QRubyValue& other) :
+    _value(other._value) {
+}
+
 QRubyValue::QRubyValue(VALUE value) :
     _value(value) {
 }
 
-QRubyValue::QRubyValue(QString value) {
-    _value = rb_str_buf_new_cstr(value.toStdString().c_str());
-}
-
-QRubyValue::QRubyValue(double value) {
-    _value = rb_float_new(value);
+QRubyValue::QRubyValue(QVariant variant) {
+    switch(variant.type()) {
+    case QVariant::Invalid:
+        break;
+    case QVariant::Bool:
+        break;
+    case QVariant::Int:
+        _value = rb_float_new(variant.toDouble());
+        break;
+    case QVariant::UInt:
+        _value = rb_float_new(variant.toDouble());
+        break;
+    case QVariant::LongLong:
+        _value = rb_float_new(variant.toDouble());
+        break;
+    case QVariant::ULongLong:
+        _value = rb_float_new(variant.toDouble());
+        break;
+    case QVariant::Double:
+        _value = rb_float_new(variant.toDouble());
+        break;
+    case QVariant::Char:
+        break;
+    case QVariant::Map:
+        break;
+    case QVariant::List:
+        break;
+    case QVariant::String:
+        _value = rb_str_buf_new_cstr(variant.toString().toStdString().c_str());
+        break;
+    case QVariant::StringList:
+        break;
+    case QVariant::ByteArray:
+        break;
+    case QVariant::BitArray:
+        break;
+    case QVariant::Date:
+        break;
+    case QVariant::Time:
+        break;
+    case QVariant::DateTime:
+        break;
+    case QVariant::Url:
+        break;
+    case QVariant::Locale:
+        break;
+    case QVariant::Rect:
+        break;
+    case QVariant::RectF:
+        break;
+    case QVariant::Size:
+        break;
+    case QVariant::SizeF:
+        break;
+    case QVariant::Line:
+        break;
+    case QVariant::LineF:
+        break;
+    case QVariant::Point:
+        break;
+    case QVariant::PointF:
+        break;
+    case QVariant::RegExp:
+        break;
+    case QVariant::RegularExpression:
+        break;
+    case QVariant::Hash:
+        break;
+    case QVariant::EasingCurve:
+        break;
+    case QVariant::Uuid:
+        break;
+    case QVariant::ModelIndex:
+        break;
+    case QVariant::LastCoreType: // = QVariant::PersistentModelIndex:
+        break;
+    case QVariant::Font:
+        break;
+    case QVariant::Pixmap:
+        break;
+    case QVariant::Brush:
+        break;
+    case QVariant::Color:
+        break;
+    case QVariant::Palette:
+        break;
+    case QVariant::Image:
+        break;
+    case QVariant::Polygon:
+        break;
+    case QVariant::Region:
+        break;
+    case QVariant::Bitmap:
+        break;
+    case QVariant::Cursor:
+        break;
+    case QVariant::KeySequence:
+        break;
+    case QVariant::Pen:
+        break;
+    case QVariant::TextLength:
+        break;
+    case QVariant::TextFormat:
+        break;
+    case QVariant::Matrix:
+        break;
+    case QVariant::Transform:
+        break;
+    case QVariant::Matrix4x4:
+        break;
+    case QVariant::Vector2D:
+        break;
+    case QVariant::Vector3D:
+        break;
+    case QVariant::Vector4D:
+        break;
+    case QVariant::Quaternion:
+        break;
+    case QVariant::PolygonF: // = QVariant::LastGuiType
+        break;
+    case QVariant::Icon:
+        break;
+    case QVariant::SizePolicy:
+        break;
+    case QVariant::UserType:
+        break;
+    }
 }
 
 QRubyValue::~QRubyValue() {
+}
+
+QRubyValue QRubyValue::functionCall(
+    QString functionName,
+    QRubyValueList arguments
+) {
+    VALUE valueArguments[arguments.count()];
+    for(int index = 0; index < arguments.count(); index++) {
+        valueArguments[index] = arguments[index].value();
+    }
+
+    const ID functionID = rb_intern(functionName.toStdString().c_str());
+
+    return rb_funcall2(
+        _value,
+        functionID,
+        arguments.count(),
+        (const VALUE*)valueArguments
+    );
+}
+
+QRubyValue QRubyValue::functionCall(
+    QString functionName,
+    QVariant argument1,
+    QVariant argument2,
+    QVariant argument3,
+    QVariant argument4,
+    QVariant argument5,
+    QVariant argument6,
+    QVariant argument7,
+    QVariant argument8,
+    QVariant argument9,
+    QVariant argument10,
+    QVariant argument11,
+    QVariant argument12
+) {
+    QRubyValueList arguments;
+    if(argument1.isValid()) { arguments << argument1; }
+    if(argument2.isValid()) { arguments << argument2; }
+    if(argument3.isValid()) { arguments << argument3; }
+    if(argument4.isValid()) { arguments << argument4; }
+    if(argument5.isValid()) { arguments << argument5; }
+    if(argument6.isValid()) { arguments << argument6; }
+    if(argument7.isValid()) { arguments << argument7; }
+    if(argument8.isValid()) { arguments << argument8; }
+    if(argument9.isValid()) { arguments << argument9; }
+    if(argument10.isValid()) { arguments << argument10; }
+    if(argument11.isValid()) { arguments << argument11; }
+    if(argument12.isValid()) { arguments << argument12; }
+
+    return functionCall(functionName, arguments);
 }
 
 bool QRubyValue::operator==(const QRubyValue& other) {
@@ -70,7 +281,7 @@ QRubyValue::ValueType QRubyValue::type() {
         return ValueTypeString;
         break;
     case RUBY_T_REGEXP:
-        return ValueTypeRegularExpression;
+        return ValueTypeRegExp;
         break;
     case RUBY_T_ARRAY:
         return ValueTypeArray;
@@ -137,7 +348,7 @@ bool QRubyValue::isClass()              { return type() == ValueTypeClass; }
 bool QRubyValue::isModule()             { return type() == ValueTypeModule; }
 bool QRubyValue::isFloat()              { return type() == ValueTypeFloat; }
 bool QRubyValue::isString()             { return type() == ValueTypeString; }
-bool QRubyValue::isRegularExpression()  { return type() == ValueTypeRegularExpression; }
+bool QRubyValue::isRegularExpression()  { return type() == ValueTypeRegExp; }
 bool QRubyValue::isArray()              { return type() == ValueTypeArray; }
 bool QRubyValue::isHash()               { return type() == ValueTypeHash; }
 bool QRubyValue::isStruct()             { return type() == ValueTypeStruct; }
@@ -158,8 +369,8 @@ bool QRubyValue::isIncludeClass()       { return type() == ValueTypeIncludeClass
 bool QRubyValue::isZombie()             { return type() == ValueTypeZombie; }
 bool QRubyValue::isMask()               { return type() == ValueTypeMask; }
 
-QRubyValue QRubyValue::classValue() {
-    return rb_class_of(_value);
+QRubyClass QRubyValue::rubyClass() {
+    return QRubyClass::fromRubyValue(QRubyValue(rb_class_of(_value)));
 }
 
 QString QRubyValue::className() {
@@ -174,10 +385,6 @@ QRubyValue QRubyValue::aryEach() {
     return rb_ary_each(_value);
 }
 
-QRubyId QRubyValue::toRubyId() {
-    return rb_sym2id(_value);
-}
-
 QString QRubyValue::toString() {
     VALUE stringValue;
     if(!isString()) {
@@ -188,11 +395,21 @@ QString QRubyValue::toString() {
     return rb_string_value_cstr(&stringValue);
 }
 
-double QRubyValue::toNumber() {
+double QRubyValue::toDouble() {
     return rb_float_value(rb_to_float(_value));
+}
+
+long QRubyValue::toLong() {
+    return rb_num2int(rb_to_int(_value));
 }
 
 VALUE QRubyValue::value() {
     return _value;
 }
 
+QRubyObject QRubyValue::toObject() {
+    if(isObject()) {
+        return QRubyObject::fromRubyValue(*this);
+    }
+    return QRubyObject();
+}

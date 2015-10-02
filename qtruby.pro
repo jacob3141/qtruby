@@ -32,14 +32,42 @@ SOURCES += \
     qrubyvalue.cpp \
     qrubyid.cpp \
     qrubymutex.cpp \
-    qrubyclass.cpp
+    qrubyclass.cpp \
+    qrubyobject.cpp \
+    qrubymodule.cpp \
+    qrubyfloat.cpp \
+    qrubystring.cpp \
+    qrubyregexp.cpp \
+    qrubyarray.cpp \
+    qrubyhash.cpp \
+    qrubystruct.cpp \
+    qrubybignumber.cpp \
+    qrubyfile.cpp \
+    qrubydata.cpp \
+    qrubycomplex.cpp \
+    qrubyrational.cpp \
+    qrubysymbol.cpp
 
 HEADERS += \
     qruby.h \
     qrubyvalue.h \
     qrubyid.h \
     qrubymutex.h \
-    qrubyclass.h
+    qrubyclass.h \
+    qrubyobject.h \
+    qrubymodule.h \
+    qrubyfloat.h \
+    qrubystring.h \
+    qrubyregexp.h \
+    qrubyarray.h \
+    qrubyhash.h \
+    qrubystruct.h \
+    qrubybignumber.h \
+    qrubyfile.h \
+    qrubydata.h \
+    qrubycomplex.h \
+    qrubyrational.h \
+    qrubysymbol.h
 
 RESOURCES +=
 
@@ -48,5 +76,5 @@ OTHER_FILES += \
     README.md
 
 INCLUDEPATH += \
-  /usr/include/x86_64-linux-gnu/ruby-2.2.0 \
-  /usr/include/ruby-2.2.0
+  /usr/include/x86_64-linux-gnu/ruby-2.1.0 \
+  /usr/include/ruby-2.1.0

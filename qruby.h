@@ -36,17 +36,42 @@
 class QRuby : public QObject {
     Q_OBJECT
 public:
-    QRuby(QObject *parent = 0);
+    enum RubyStdIO {
+        StdIn,
+        StdOut,
+        StdErr
+    };
+
+    QRuby(int &argc, char **argv, QObject *parent = 0);
     ~QRuby();
 
-    QRubyValue newObject();
+    QRubyValue rubyStdIO(RubyStdIO stdIO);
 
-    QRubyValue evaluate(QString code);
+    /** Create a new binding. */
+    QRubyValue newBinding();
+    /** @return the top level binding. */
+    QRubyValue topLevelBinding();
+
+    /** Requires the specified module. */
+    QRubyValue require(QString name);
+    /** Evaluates the ruby code with the given binding. */
+    QRubyValue eval(QString code, QRubyValue binding = QRubyValue());
+    /** Evaluates the ruby code with the top level binding. */
+    QRubyValue evalGlobally(QString code);
+
+    /** Performs a function call on the specified target. */
+    QRubyValue functionCall(
+        QRubyValue target,
+        QString functionName,
+        QRubyValueList arguments = QRubyValueList()
+    );
 
     QRubyValue errorInfo();
     void setErrorInfo(QRubyValue rubyValue);
 
+    /** Prints the current ruby version. */
     void printVersion();
+    /** Prints a copyright notice. */
     void printCopyrightNotice();
 };
 

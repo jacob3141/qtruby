@@ -23,30 +23,79 @@
 
 // Ruby includes
 #include <ruby.h>
+#include <ruby/intern.h>
 
 // Own includes
 #include "qruby.h"
+#include "qrubyclass.h"
 
-QRuby::QRuby(QObject *parent) :
+QRuby::QRuby(int &argc, char **argv, QObject *parent) :
     QObject(parent) {
-    ruby_setup();
+    ruby_sysinit(&argc, &argv);
+    RUBY_INIT_STACK;
     ruby_init();
+    ruby_init_loadpath();
 }
 
 QRuby::~QRuby() {
-    ruby_cleanup(0);
+    ruby_finalize();
 }
 
-QRubyValue QRuby::newObject() {
-    return QRubyValue(rb_newobj());
+
+QRubyValue QRuby::rubyStdIO(RubyStdIO stdIO) {
+    switch(stdIO) {
+    case StdIn:     return rb_stdin;    break;
+    case StdOut:    return rb_stdout;   break;
+    case StdErr:    return rb_stderr;   break;
+    }
+
+    return QRubyValue();
 }
 
-QRubyValue QRuby::evaluate(QString code) {
-    return QRubyValue(rb_eval_string_protect(code.toStdString().c_str(), 0));
+QRubyValue QRuby::newBinding() {
+    return QRubyValue(rb_binding_new());
+}
+
+QRubyValue QRuby::topLevelBinding() {
+    return QRubyValue(rb_const_get(rb_cObject, rb_intern("TOPLEVEL_BINDING")));
+}
+
+QRubyValue QRuby::require(QString name) {
+    return rb_require(name.toStdString().c_str());
+}
+
+QRubyValue QRuby::eval(QString code, QRubyValue binding) {
+    QRubyValueList arguments;
+    arguments << QRubyValue(code) << binding;
+    return functionCall(Qnil, "eval", arguments);
+}
+
+QRubyValue QRuby::evalGlobally(QString code) {
+    return eval(code, topLevelBinding());
+}
+
+QRubyValue QRuby::functionCall(
+    QRubyValue target,
+    QString functionName,
+    QRubyValueList arguments
+) {
+    VALUE valueArguments[arguments.count()];
+    for(int index = 0; index < arguments.count(); index++) {
+        valueArguments[index] = arguments[index].value();
+    }
+
+    const ID functionID = rb_intern(functionName.toStdString().c_str());
+
+    return rb_funcall2(
+        target.value(),
+        functionID,
+        arguments.count(),
+        (const VALUE*)valueArguments
+    );
 }
 
 QRubyValue QRuby::errorInfo() {
-    return QRubyValue(rb_errinfo());
+    return rb_errinfo();
 }
 
 void QRuby::setErrorInfo(QRubyValue rubyValue) {

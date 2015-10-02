@@ -26,12 +26,75 @@
 // Own includes
 #include "qrubyvalue.h"
 
+/*
+ * TODO: Map these methods:
+VALUE rb_class_boot(VALUE);
+VALUE rb_class_new(VALUE);
+VALUE rb_class_inherited(VALUE, VALUE);
+VALUE rb_class_instance_methods(int, VALUE*, VALUE);
+VALUE rb_class_public_instance_methods(int, VALUE*, VALUE);
+VALUE rb_class_protected_instance_methods(int, VALUE*, VALUE);
+VALUE rb_class_private_instance_methods(int, VALUE*, VALUE);
+VALUE rb_class_new_instance(int, VALUE*, VALUE);
+VALUE rb_class_real(VALUE);
+VALUE rb_class_inherited_p(VALUE, VALUE);
+VALUE rb_class_superclass(VALUE);
+VALUE rb_class_get_superclass(VALUE);
+VALUE rb_class_path(VALUE);
+VALUE rb_class_path_cached(VALUE);
+VALUE rb_class_name(VALUE);
+*/
 class QRubyClass :
     public QRubyValue {
 public:
-    QRubyClass(QString className, QRubyValue superClass = QRubyValue());
+    enum RubyClass {
+        BasicObject,
+        Object,
+        Array,
+        Bignum,
+        Binding,
+        Class,
+        Cont,
+        Dir,
+        Data,
+        FalseClass,
+        Encoding,
+        Enumerator,
+        File,
+        Fixnum,
+        Float,
+        Hash,
+        Integer,
+        IO,
+        Match,
+        Method,
+        Module,
+        NameErrorMesg,
+        NilClass,
+        Numeric,
+        Proc,
+        Random,
+        Range,
+        Rational,
+        Complex,
+        Regexp,
+        Stat,
+        String,
+        Struct,
+        Symbol,
+        Thread,
+        Time,
+        TrueClass,
+        UnboundMethod
+    };
+
+    QRubyClass(QString name, QRubyValue superClass = QRubyValue());
     QRubyClass(QRubyValue superClass = QRubyValue());
     ~QRubyClass();
 
-    QString className();
+    QString name();
+
+
+    static QRubyClass classValue(RubyClass rubyClass);
+    static QRubyClass fromRubyValue(QRubyValue rubyValue);
 };
