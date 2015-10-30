@@ -177,7 +177,7 @@ public:
 
     QString toString();
     double toDouble();
-    long toLong();
+    qint64 toLong();
 
     VALUE value();
 

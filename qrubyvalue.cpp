@@ -194,6 +194,11 @@ QRubyValue::QRubyValue(QVariant variant) {
         break;
     case QVariant::UserType:
         break;
+
+    // For silencing the compiler about not handling LastType.
+    default:
+    case QVariant::LastType:
+        break;
     }
 }
 
@@ -399,7 +404,7 @@ double QRubyValue::toDouble() {
     return rb_float_value(rb_to_float(_value));
 }
 
-long QRubyValue::toLong() {
+qint64 QRubyValue::toLong() {
     return rb_num2int(rb_to_int(_value));
 }
 

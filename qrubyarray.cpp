@@ -22,6 +22,7 @@
 //
 
 // Own includes
+#include "qruby.h"
 #include "qrubyarray.h"
 
 QRubyArray::QRubyArray() :

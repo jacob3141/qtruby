@@ -28,6 +28,7 @@
 // Own includes
 #include "qruby.h"
 #include "qrubyclass.h"
+#include "qrubyvalue.h"
 
 QRuby::QRuby(int &argc, char **argv, QObject *parent) :
     QObject(parent) {
@@ -40,7 +41,6 @@ QRuby::QRuby(int &argc, char **argv, QObject *parent) :
 QRuby::~QRuby() {
     ruby_finalize();
 }
-
 
 QRubyValue QRuby::rubyStdIO(RubyStdIO stdIO) {
     switch(stdIO) {
@@ -67,31 +67,11 @@ QRubyValue QRuby::require(QString name) {
 QRubyValue QRuby::eval(QString code, QRubyValue binding) {
     QRubyValueList arguments;
     arguments << QRubyValue(code) << binding;
-    return functionCall(Qnil, "eval", arguments);
+    return QRubyValue().functionCall("eval", arguments);
 }
 
 QRubyValue QRuby::evalGlobally(QString code) {
     return eval(code, topLevelBinding());
-}
-
-QRubyValue QRuby::functionCall(
-    QRubyValue target,
-    QString functionName,
-    QRubyValueList arguments
-) {
-    VALUE valueArguments[arguments.count()];
-    for(int index = 0; index < arguments.count(); index++) {
-        valueArguments[index] = arguments[index].value();
-    }
-
-    const ID functionID = rb_intern(functionName.toStdString().c_str());
-
-    return rb_funcall2(
-        target.value(),
-        functionID,
-        arguments.count(),
-        (const VALUE*)valueArguments
-    );
 }
 
 QRubyValue QRuby::errorInfo() {

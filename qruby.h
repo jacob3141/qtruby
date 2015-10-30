@@ -59,13 +59,6 @@ public:
     /** Evaluates the ruby code with the top level binding. */
     QRubyValue evalGlobally(QString code);
 
-    /** Performs a function call on the specified target. */
-    QRubyValue functionCall(
-        QRubyValue target,
-        QString functionName,
-        QRubyValueList arguments = QRubyValueList()
-    );
-
     QRubyValue errorInfo();
     void setErrorInfo(QRubyValue rubyValue);
 
